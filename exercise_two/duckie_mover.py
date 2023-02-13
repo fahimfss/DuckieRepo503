@@ -27,6 +27,7 @@ class DuckieMover(DTROS):
 
         self.right_tick_sub = rospy.Subscriber(f'/{name}/right_wheel_encoder_node/tick', 
         WheelEncoderStamped, self.right_tick,  queue_size = 1)
+
         self.left_tick_sub = rospy.Subscriber(f'/{name}/left_wheel_encoder_node/tick', 
         WheelEncoderStamped, self.left_tick,  queue_size = 1)
 
@@ -35,6 +36,7 @@ class DuckieMover(DTROS):
         self.r = rospy.get_param(f'/{name}/kinematics_node/radius', 100)
         rospy.loginfo("Radius of wheel: " +  str(self.r))
 
+        # Initialize global and robot frame values
         self.Xw = 0.32
         self.Yw = 0.32
         self.Xr = 0
@@ -55,6 +57,9 @@ class DuckieMover(DTROS):
 
 
     def right_tick(self, msg):
+        """
+        Callback function to update the right wheel tick data
+        """ 
         if not self.rt_initial_set:
             self.rt_initial_set = True
             self.rt_initial_val = msg.data
@@ -63,6 +68,9 @@ class DuckieMover(DTROS):
 
 
     def left_tick(self, msg):
+        """
+        Callback function to update the left wheel tick data
+        """ 
         if not self.lt_initial_set:
             self.lt_initial_set = True
             self.lt_initial_val = msg.data
@@ -70,6 +78,11 @@ class DuckieMover(DTROS):
         # self.lt_dist = (2 * pi * self.r * self.lt_val) / 135
 
     def stop(self, duration):
+        """
+        Stop the duckie-bot (by sending 0 velocity and omega commands to self.vel_pub) for a specific time.
+
+        :param duration: The amount of time in seconds to stop
+        """ 
         msg_velocity = Twist2DStamped()
         msg_velocity.header.stamp = rospy.Time.now()
         msg_velocity.v = 0
@@ -80,47 +93,53 @@ class DuckieMover(DTROS):
         time.sleep(duration)
 
     def ex_two_part_two(self):
-        # State one: (Green led for 5s)
+        """
+        The function to carray out the part two of exercise two
+        """ 
+        # State one: (Red led for 5s)
         rospy.loginfo("Waiting for led service..")
         rospy.wait_for_service('led_control_srv')
         rospy.loginfo("Connected to led service.")
         led_srv = rospy.ServiceProxy('led_control_srv', GetVariable)
         name_json = String()
-        name_json.data = str("3")  # red
+        name_json.data = str("3")  # red led
         led_srv(name_json)
         time.sleep(5)
 
         rad_90 = pi/2
 
-        name_json.data = str("1")  # green
+        # State two
+        name_json.data = str("1")  # green led
         led_srv(name_json)
-        self.task_rotation(-rad_90, -(pi * 3.2), 0.25)       # 90 deg clockwise, 1st turn
-        self.task_straight_125cm(0.105)                     # Go straight, bottom part 
-        self.task_rotation(rad_90, pi * 1.6, 0.28)         # 90 deg counter clockwise, bottom right turn
-        self.task_straight_125cm(0.09)              # Go straight, right part 
-        self.task_rotation(rad_90, pi * 1.2, 0.2)   # 90 deg counter clockwise, middle right turn
-        self.task_straight_125cm(0.085)              # Go straight, center-right to center-left part 
+        self.task_rotation(-rad_90, -(pi * 3.2), 0.25)       # 1st turn, bottom left, 90 deg clockwise
+        self.task_straight_125cm(0.105)                      # Go straight, bottom part, left to right
+        self.task_rotation(rad_90, pi * 1.6, 0.28)           # 2nd turn, bottom right, 90 deg counter clockwise 
+        self.task_straight_125cm(0.09)                       # Go straight, right part,  bottom to middle
+        self.task_rotation(rad_90, pi * 1.2, 0.2)            # 3rd turn, middle-right, 90 deg counter clockwise, 
+        self.task_straight_125cm(0.085)                      # Go straight, center, right to left
 
-        name_json.data = str("3")  # red
-        led_srv(name_json)
-        time.sleep(5)
-
-        name_json.data = str("1")  # green          Go back home
-        led_srv(name_json)
-
-        self.task_rotation(rad_90, pi * 1.5, 0.2)  # 0 deg counter clockwise, middle left turn
-        self.task_straight_125cm(0.08)              # Go straight, center-left to bottom-left 
-        self.task_rotation(pi, pi * 3, 0.3)      # Turn 180
-
-        name_json.data = str("3")  # red
+        # State one
+        name_json.data = str("3")  # red led
         led_srv(name_json)
         time.sleep(5)
 
-
-        name_json.data = str("4") 
+        # State three, Go back home
+        name_json.data = str("1")  # green led        
         led_srv(name_json)
 
-        # self.task_rotation(rad_90, pi * 2.2, 1.2)
+        self.task_rotation(rad_90, pi * 1.5, 0.2)            # 4th turn, middle-left 90 deg counter clockwise 
+        self.task_straight_125cm(0.08)                       # Go straight, left part, middle to center 
+        self.task_rotation(pi, pi * 3, 0.3)                  # Turn 180
+
+        # State one
+        name_json.data = str("3")  # red led
+        led_srv(name_json)
+        time.sleep(5)
+
+        # State four, Clockwise circular movement
+        name_json.data = str("4")  # purple led
+        led_srv(name_json)
+
         msg_velocity = Twist2DStamped()
         msg_velocity.header.stamp = rospy.Time.now()
         msg_velocity.v = 0.35
@@ -136,7 +155,7 @@ class DuckieMover(DTROS):
         for _ in range(10):
             self.stop(0.1)
 
-        name_json.data = str("3") 
+        name_json.data = str("3")  # red led
         led_srv(name_json)
 
         self.bag.close()
@@ -147,6 +166,13 @@ class DuckieMover(DTROS):
 
 
     def update_frames(self, delta_rt, delta_lt):
+        """
+        Using the new information on right ticks and left ticks, the robot and global frame is updated. 
+        The updated global frame values (Xw, Yw and Th) is saved in a rosbag.
+
+        :param delta_rt: Changes in ticks in the right wheel
+        :param delta_lt: Changes in ticks in the left wheel
+        """ 
         delta_rw_dist = (2 * pi * self.r * delta_rt) / 135
         delta_lw_dist = (2 * pi * self.r * delta_lt) / 135
 
@@ -175,6 +201,18 @@ class DuckieMover(DTROS):
         return delta_dist_cover
 
     def task_rotation(self, rotation_amount, omega_amount, stopping_offset):
+        """
+        Making the duckie-bot rotate in place.      
+
+        :param rotation_amount: The required rotation value.
+        :param omega_amount:    The turning velocity. The friction is different in different parts of the arena. If the same
+                                turning velocity  (omega)  is used in every part of the arena,  sometimes  the robot rotated 
+                                too much  and  sometimes  it did not rotate at  all. We used  different values for omega for 
+                                different turns. 
+        
+        :param stopping_offset: Due to imperfect calculations, inertia, and slippage, sometimes the bot  rotated more  than 
+                                needed. The stopping_offset is reduced from rotation_amount to compensate for this scenario.
+        """ 
         rospy.loginfo("Starting rotation task..")
         rospy.loginfo(f'Initial Theta: {self.Th}')
         msg_velocity = Twist2DStamped()
@@ -212,7 +250,19 @@ class DuckieMover(DTROS):
         for i in range(10):
             self.stop(0.1)
 
+
     def task_straight_125cm(self, bias):
+        """
+        Making the duckie-bot go 1.1m in the forward direction.
+
+        The duckie-bot was frequently going out of the arena with the original 1.25m range. 
+        So the task was reduced to 1.1m instead.        
+
+        :param bias: A bias value applied to the omega variable in the Twist2DStamped message. This was  used because  it 
+                     was observed  that the duckie-bot frequently moved to a specific direction in a specific part of the
+                     arena, when the bot was commanded to move staright. This bias is used to fix the orientation of  the
+                     bot.  
+        """ 
         rospy.loginfo("Starting 1.25m task..")
 
         msg_velocity = Twist2DStamped()
@@ -249,7 +299,10 @@ class DuckieMover(DTROS):
             self.stop(0.1)
         
 
-    def task125cm(self):
+    def task125cm_forward_backward(self):
+        """
+        Making the duckie-bot go 1.25m in the forward direction and 1.25m in the backward direction. 
+        """ 
         rospy.loginfo("Starting 1.25m task..")
 
         msg_velocity = Twist2DStamped()
@@ -325,7 +378,7 @@ class DuckieMover(DTROS):
 
 
     def run(self):
-        # self.task125cm()
+        # self.task125cm_forward_backward()
         # self.task_rotation()
         # self.led_test()
         self.ex_two_part_two()

@@ -35,7 +35,7 @@ def handle_state(req):
         msg.frequency = 0
         msg.frequency_mask = [1, 1, 1, 1, 1]
 
-        state = int(req.name_json.data)
+        state = int(req.name_json.data)  # A number is sent by the my_mover_node node to select the color of the led
         
         if state == 1:
             msg.color_list = color1
