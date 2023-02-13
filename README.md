@@ -14,4 +14,4 @@ Ningyuan's duckie bot website can be found here: [https://sites.google.com/ualbe
 ### Exercise 2
 [Exercise 2](https://github.com/fahimfss/DuckieRepo503/tree/master/exercise_two) is a team-based exercise where we learned how to create ROS nodes for subscribing and publishing messages, send velocity commands to the duckie-bot wheels to move the bot in specific ways, and how to use ROS bag and services. 
 
-#### Currenlty working on Exercise 3.
+#### Currenlty we are working on Exercise 3.
