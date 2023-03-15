@@ -196,6 +196,7 @@ class LaneFollowNode(DTROS):
 
         self.velocity = self.move_velocity
 
+        # detect red line if it is not processing the intersection (detect it once)
         if not self.process_intersection:
             # image_hsv = image_hsv[60:,:,:]
             # red line detection
@@ -229,9 +230,11 @@ class LaneFollowNode(DTROS):
                 else:
                     rospy.loginfo('Going Right')
 
+        # make sure during the intersection process, the red line wont be detected again
         if self.process_intersection and self.cur_dist > self.intersection_dist:
             self.process_intersection = False
 
+        # at the intersection and shold follow the robot
         if self.process_intersection:
             if center != -1:
                 self.proportional = ((center) - int(crop_width / 2)) / 3.5
