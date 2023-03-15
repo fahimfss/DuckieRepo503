@@ -106,6 +106,7 @@ class LaneFollowNode(DTROS):
         # Shutdown hook
         rospy.on_shutdown(self.hook)
 
+    # Detect the ticks for the right wheel        
     def right_tick(self, msg):
         if not self.rt_initial_set:
             self.rt_initial_set = True
@@ -113,6 +114,7 @@ class LaneFollowNode(DTROS):
         self.rt = msg.data - self.rt_initial_val
         # self.rt_dist = (2 * pi * self.r * self.rt_val) / 135
 
+    # Detect the ticks for the left wheel    
     def left_tick(self, msg):
         if not self.lt_initial_set:
             self.lt_initial_set = True
