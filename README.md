@@ -17,4 +17,4 @@ Ningyuan's duckie bot website can be found here: [https://sites.google.com/ualbe
 [Exercise 3](https://github.com/fahimfss/DuckieRepo503/tree/master/exercise_three) is a team-based exercise where we need to implement the apriltag detection, lane following, and sensor fusion.
 
 #### Exercise 4
-[Exercise 4](https://github.com/fahimfss/DuckieRepo503/tree/master/exercise_four) is a team-based exercise where we need to implement the robot following.
+[Exercise 4](https://github.com/fahimfss/DuckieRepo503/tree/master/exercise_four) is a team-based exercise. The objective of this exercise is to implement an autonomous safe tailing behavior on the Duckiebot. It combines lane following, color detection, state machine from previous exercises with new components such as vehicle detection and distance measurement. 
