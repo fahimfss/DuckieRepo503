@@ -1,5 +1,9 @@
 # CMPUT 503 - Experimental Mobile Robotics - Code Repository
 
+Hi from our Duckiebot!!
+![image](https://user-images.githubusercontent.com/8725869/226133600-4b5227c4-8b41-4cc6-8096-be24fc994459.png)
+
+
 This is a repository made by me (Fahim Shahriar) and my partner (Ningyuan Pei) to maintain the exercise codes required for the CMPUT 503 course. This repository will host all the codes for the six exercises of CMPUT 503. which will be published sequentially. 
 
 CMPUT 503 is based on [Duckiebots](https://get.duckietown.com/products/duckiebot-db21), a simple jetson nano-based two-wheeled robot with a  camera. We expect to learn a lot about robotics, robot kinematics, odometry, ROS, and image processing based tasks with this robot. 
