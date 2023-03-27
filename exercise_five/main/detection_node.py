@@ -155,32 +155,7 @@ class TagDetector(DTROS):
         # rospy.loginfo(f'width: {w} height: {h}')
         if h == 0:
             return None
-        
-        # # collect images for training
-        # filename = '/data/bags/n'+ str(self.counter)+".jpg"
-        # cv2.imwrite(filename, cropped_img)
-        # self.counter = self.counter + 1
-        
-        # A = (x3, x2)
-        # B = (x4, x2)
-        # C = (x4, x1)
-        # D = (x3, x1)
-
-        # # Determine the decoded ID of tag, and decide the color of bbox 
-        # id = tag.tag_id
-
-        # tag_name = "Stop sign"
-        # which_tag = 's'
-        # col = (0, 0, 255)   # stop sign (default)
-        # if id in [153, 58, 133, 62]:
-        #     tag_name = "T-intersection"
-        #     col = (255, 0, 0)   # T-intersection sign
-        # elif id in [201, 93, 94, 200]:
-        #     tag_name = "UofA"name
-        # cv2.circle(img, (cx, cy), 5, (0, 0, 255), -1)
-        # cv2.putText(img, tag_name, (cx, cy + 15),
-        #             cv2.FONT_HERSHEY_SIMPLEX, 0.5,
-        #             (0, 0, 255), 2)
+    
 
         return cropped_img
     
